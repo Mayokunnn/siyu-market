@@ -1,0 +1,236 @@
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { useUser } from "../context/Usercontext";
+import minus from "../assets/icon-minus.svg";
+import add from "../assets/icon-plus.svg";
+import del from "../assets/icon-delete.svg";
+import back from "../assets/icon-back.svg";
+import PriceDisplay from "../component/PriceDisplay";
+
+const Cart = () => {
+  const { cart, setCart, removeFromCart, user } = useUser();
+  const [quantities, setQuantities] = useState(() => {
+    return cart.reduce((acc, item) => {
+      acc[item.id] = item.quantity || 1;
+      return acc;
+    }, {});
+  });
+  const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    setQuantities((prev) => {
+      const updatedQuantities = { ...prev };
+      cart.forEach((item) => {
+        if (!updatedQuantities[item.id]) {
+          updatedQuantities[item.id] = item.quantity || 1;
+        }
+      });
+      return updatedQuantities;
+    });
+  }, [cart]);
+
+  useEffect(() => {
+    const updatedCart = cart.map((item) => ({
+      ...item,
+      quantity: quantities[item.id] || 1,
+    }));
+    if (JSON.stringify(updatedCart) !== JSON.stringify(cart)) {
+      setCart(updatedCart);
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
+    }
+  }, [quantities, setCart]);
+
+  const handleIncrease = (id) => {
+    setQuantities((prev) => ({ ...prev, [id]: (prev[id] || 1) + 1 }));
+  };
+
+  const handleDecrease = (id) => {
+    setQuantities((prev) => ({
+      ...prev,
+      [id]: Math.max(1, (prev[id] || 1) - 1),
+    }));
+  };
+
+  const handleRemove = (id) => {
+    removeFromCart(id);
+    setQuantities((prev) => {
+      const { [id]: _, ...remaining } = prev;
+      return remaining;
+    });
+  };
+
+  const totalPrice = cart.reduce(
+    (acc, item) => acc + item.price * (quantities[item.id] || 1),
+    0
+  );
+
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat().format(price);
+  };
+
+  const handleCheckout = async () => {
+    try {
+      const userToken = user?.data.access_token;
+      if (!userToken) {
+        throw new Error("You must be logged in to checkout.");
+      }
+
+      const itemsToSend = cart.map((item) => ({
+        id: item.id,
+        quantity: quantities[item.id] || 1,
+      }));
+
+      const response = await fetch(
+        "https://siyumarket-backend.vercel.app/cart/add",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${userToken}`,
+          },
+          body: JSON.stringify({ items: itemsToSend }),
+        }
+      );
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error response from server:", errorData);
+        throw new Error(errorData.message || "Failed to checkout.");
+      }
+
+
+      const data = await response.json();
+      setCart([]);
+      localStorage.setItem("cart", JSON.stringify([]));
+      alert("Checkout successful!");
+    } catch (error) {
+      console.error("Checkout error:", error);
+      alert(`Checkout failed: ${error.message}`);
+    }
+  };
+
+  return (
+    <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="py-10">
+        <div className="py-5 bg-blue-800 text-center">
+          <h1 className="text-3xl sm:text-4xl font-bold text-white">
+            Shopping Cart
+          </h1>
+        </div>
+        <div className="bg-white rounded p-4">
+          {cart.length > 0 ? (
+            <div>
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse text-left text-sm md:text-base">
+                  <thead>
+                    <tr>
+                      <th className="py-2 border-b">Product</th>
+                      <th className="py-2 border-b">Price</th>
+                      <th className="py-2 border-b">Quantity</th>
+                      <th className="py-2 border-b">Subtotal</th>
+                      <th className="py-2 border-b">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {cart.map((item) => (
+                      <tr key={item.id} className="align-top">
+                        <td className="py-3 flex items-center gap-3">
+                          <img
+                            src={item.image || ""}
+                            alt={item.name}
+                            className="w-12 h-12 md:w-16 md:h-16 object-contain"
+                          />
+                          <span className="text-sm md:text-base">{item.name}</span>
+                        </td>
+                        <td className="py-3"><PriceDisplay price={item.price} /> </td>
+                        <td className="py-3">
+                          <div className="flex items-center justify-between bg-gray-100 p-2 w-20 md:w-24 rounded-lg text-sm">
+                            <button onClick={() => handleDecrease(item.id)}>
+                              <img src={minus} alt="Decrease" />
+                            </button>
+                            <span>{quantities[item.id]}</span>
+                            <button onClick={() => handleIncrease(item.id)}>
+                              <img src={add} alt="Increase" />
+                            </button>
+                          </div>
+                        </td>
+                        <td className="py-3">
+                          <PriceDisplay price={item.price * (quantities[item.id] || 1)} />
+                        </td>
+                        <td className="py-3">
+                          <button onClick={() => handleRemove(item.id)}>
+                            <img src={del} alt="Delete" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="mt-4 flex flex-col sm:flex-row justify-between">
+                <Link
+                  to="/products"
+                  className="text-sm text-blue-800 flex items-center gap-2"
+                >
+                  <img src={back} alt="Back" className="w-5 h-5" />
+                  Continue Shopping
+                </Link>
+                <div className="text-right">
+                  <p className="text-lg font-semibold">
+                    Total: &#8358;{formatPrice(totalPrice)}
+                  </p>
+                  <button
+                    className="mt-2 bg-blue-800 text-white cursor-pointer px-4 py-2 rounded"
+                    onClick={() => setShowModal(true)}
+                  >
+                    Checkout
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <p className="text-center">Your cart is empty.</p>
+          )}
+        </div>
+      </div>
+
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg max-w-lg w-full">
+            <h2 className="text-xl font-bold mb-4">Order Summary</h2>
+            <ul className="space-y-4">
+              {cart.map((item) => (
+                <li key={item.id} className="flex justify-between">
+                  <span>
+                    {item.name} <strong>(x{item.quantity})</strong>
+                  </span>
+                  <span>
+                    <strong>NGN {item.price * item.quantity}</strong>
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-4 font-bold text-lg">
+              Total: &#8358;{formatPrice(totalPrice)}
+            </div>
+            <div className="mt-6 flex justify-end space-x-4">
+              <button
+                className="bg-gray-500 text-white px-4 py-2 rounded"
+                onClick={() => setShowModal(false)}
+              >
+                Close
+              </button>
+              <button
+                className="bg-blue-800 text-white cursor-pointer px-4 py-2 rounded"
+                onClick={handleCheckout}
+              >
+                Proceed to Checkout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Cart;
