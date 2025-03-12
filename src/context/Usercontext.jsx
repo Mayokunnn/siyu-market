@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { toast } from "sonner";
 
 const UserContext = createContext();
 
@@ -40,6 +41,7 @@ export const UserProvider = ({ children }) => {
     setCart([]);
     setOrderHistory([]);
     localStorage.removeItem("user");
+    toast("You are logged out")
   };
 
   const placeOrder = () => {
@@ -52,6 +54,15 @@ export const UserProvider = ({ children }) => {
     setCart([]);
   };
 
+
+  const updateCartQuantity = (id, quantity) => {
+    setCart((prevCart) =>
+      prevCart.map((item) =>
+        item.id === id ? { ...item, quantity: Math.max(0, quantity) } : item
+      )
+    );
+  };
+  
   
   const addToCart = (product) => {
     setCart((prev) => {
@@ -111,6 +122,7 @@ export const UserProvider = ({ children }) => {
         placeOrder,
         addToCart,
         removeFromCart,
+        updateCartQuantity,
         orderHistory,
       }}
     >

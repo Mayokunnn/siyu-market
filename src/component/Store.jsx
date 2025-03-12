@@ -18,7 +18,6 @@ const Store = () => {
         }
         const data = await response.json();
         setVendors(data.data.stores); 
-        console.log(data.data.stores);
       } catch (err) {
         setError(err.message);
       } finally {

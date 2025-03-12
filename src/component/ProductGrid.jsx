@@ -9,19 +9,11 @@ function ProductGrid() {
   const [randomProducts, setRandomProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const { addToCart } = useUser();
+  const { addToCart, removeFromCart, cart, updateCartQuantity } = useUser(); 
 
   const getRandomItems = (array, count) => {
     const shuffled = [...array].sort(() => 0.5 - Math.random());
     return shuffled.slice(0, count);
-  };
-
-  
-  const truncateText = (text, limit) => {
-    if (text.length > limit) {
-      return text.substring(0, limit) + "...";
-    }
-    return text;
   };
 
   useEffect(() => {
@@ -43,62 +35,93 @@ function ProductGrid() {
     }
   }, [products]);
 
+  const getCartQuantity = (id) => {
+    const item = cart?.find((product) => product.id === id);
+    return item ? item.quantity : 0;
+  };
+
   return (
     <div className="p-8">
       {loading ? (
         <Spinner />
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {randomProducts.map((product) => (
-            <div
-              key={product.id}
-              className="bg-white p-4 h-full flex flex-col justify-between rounded-lg shadow hover:shadow-lg transition"
-            >
-              <Link to={`/product/${product.id}`}>
-                <img
-                  src={product.image_url}
-                  alt={product.name}
-                  className="w-full h-[150px] object-contain cursor-pointer rounded"
-                />
-              </Link>
-              <div className="mt-4 flex flex-col h-full ">
-                <h3 className="text-lg font-semibold">
-                  <Link to={`/product/${product.id}`} className="hover:underline">
-                    {truncateText(product.name, 30)}
-                  </Link>
-                </h3>
-                <p className="text-gray-500 text-sm capitalize">
-                  {truncateText(product.category, 25)}
-                </p>
-                <p className="text-gray-700 mt-2 capitalize">
-                  {truncateText(product.description, 40)}
-                </p>
-                <div className="flex items-center justify-between mt-4">
-                  <span className="text-xl font-semibold text-black">
-                  <PriceDisplay price={product.discounted_price} />
-                  </span>
-                  <span className="text-sm text-gray-500">
-                    {product.stock} items available
-                  </span>
+          {randomProducts.map((product) => {
+            const quantity = getCartQuantity(product.id);
+
+            return (
+              <div
+                key={product.id}
+                className="bg-white p-4 h-full flex flex-col justify-between rounded-lg shadow hover:shadow-lg transition"
+              >
+                <Link to={`/product/${product.id}`}>
+                  <img
+                    src={product.image_url}
+                    alt={product.name}
+                    className="w-full h-[150px] object-contain cursor-pointer rounded"
+                  />
+                </Link>
+                <div className="mt-4 flex flex-col h-full">
+                  <h3 className="text-lg font-semibold">
+                    <Link to={`/product/${product.id}`} className="hover:underline">
+                      {product.name}
+                    </Link>
+                  </h3>
+                  <p className="text-gray-500 text-sm capitalize">{product.category}</p>
+                  <p className="text-gray-700 mt-2 capitalize">{product.description}</p>
+                  <div className="flex items-center justify-between mt-4">
+                    <span className="text-xl font-semibold text-black">
+                      <PriceDisplay price={product.discounted_price} />
+                    </span>
+                    <span className="text-sm text-gray-500">
+                      {product.stock > 0 ? product.stock : "No"} items available
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <button
-                  disabled={product.stock === 0}
-                  onClick={() =>
-                    addToCart({
-                      id: product.id,
-                      name: product.name,
-                      price: product.discounted_price,
-                      image: product.image_url,
-                      quantity: 1,
-                    })
-                  }
-                  className={`w-full mt-4 bg-black text-white py-2 capitalize rounded ${+product.stock > 0 ? "hover:bg-gray-500 cursor-pointer " : "cursor-not-allowed"} transition`}
+
+                {/* Conditional Button UI */}
+                {quantity > 0 ? (
+                  <div className="flex items-center justify-between mt-4 bg-gray-200 rounded p-2">
+                    <button
+                      onClick={() => updateCartQuantity(product.id, quantity - 1)}
+                      className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-700"
+                    >
+                      -
+                    </button>
+                    <span className="font-semibold">{quantity}</span>
+                    <button
+                      onClick={() => updateCartQuantity(product.id, quantity + 1)}
+                      className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-700"
+                    >
+                      +
+                    </button>
+                  </div>
+                ) :
+                  +product.stock > 0  ? <button
+                    onClick={() =>
+                      addToCart({
+                        id: product.id,
+                        name: product.name,
+                        price: product.discounted_price,
+                        image: product.image_url,
+                        quantity: 1,
+                      })
+                    }
+                    className={`w-full mt-4 bg-black text-white py-2 capitalize rounded ${
+                      +product.stock > 0 ? "hover:bg-gray-500 cursor-pointer" : "cursor-not-allowed"
+                    } transition`}
+                  >Add to Cart
+                  </button> : <button
+                  disabled={true}
+                  className={`w-full mt-4 bg-black text-white py-2 capitalize rounded ${
+                    +product.stock > 0 ? "hover:bg-gray-500 cursor-pointer" : "cursor-not-allowed"
+                  } transition`}
                 >
-                 {+product.stock > 0 ? "Add to Cart" : "Out of Stock"}
-                </button>
-            </div>
-          ))}
+                   Out of Stock
+                </button>}
+              </div>
+            );
+          })}
         </div>
       )}
 

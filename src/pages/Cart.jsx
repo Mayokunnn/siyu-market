@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useUser } from "../context/Usercontext";
 import minus from "../assets/icon-minus.svg";
 import add from "../assets/icon-plus.svg";
 import del from "../assets/icon-delete.svg";
 import back from "../assets/icon-back.svg";
 import PriceDisplay from "../component/PriceDisplay";
+import { toast } from "sonner";
+import Loader from "../component/Loader";
 
 const Cart = () => {
+  const navigate = useNavigate()
   const { cart, setCart, removeFromCart, user } = useUser();
+  const [isLoading, setIsLoading] = useState(false);
   const [quantities, setQuantities] = useState(() => {
     return cart.reduce((acc, item) => {
       acc[item.id] = item.quantity || 1;
@@ -99,12 +103,13 @@ const Cart = () => {
 
 
       const data = await response.json();
-      setCart([]);
-      localStorage.setItem("cart", JSON.stringify([]));
-      alert("Checkout successful!");
+      localStorage.setItem("cart", JSON.stringify(data));
+      navigate("/checkout")
+      sessionStorage.setItem("fromCart", "true");
+      
     } catch (error) {
-      console.error("Checkout error:", error);
-      alert(`Checkout failed: ${error.message}`);
+      toast.error("Failed to checkout");
+      console.log(error)
     }
   };
 
@@ -122,7 +127,7 @@ const Cart = () => {
               <div className="overflow-x-auto">
                 <table className="w-full border-collapse text-left text-sm md:text-base">
                   <thead>
-                    <tr>
+                    <tr className="w-full">
                       <th className="py-2 border-b">Product</th>
                       <th className="py-2 border-b">Price</th>
                       <th className="py-2 border-b">Quantity</th>
@@ -133,7 +138,7 @@ const Cart = () => {
                   <tbody>
                     {cart.map((item) => (
                       <tr key={item.id} className="align-top">
-                        <td className="py-3 flex items-center gap-3">
+                        <td className="py-3 flex items-center gap-3 w-full">
                           <img
                             src={item.image || ""}
                             alt={item.name}
@@ -204,13 +209,13 @@ const Cart = () => {
                     {item.name} <strong>(x{item.quantity})</strong>
                   </span>
                   <span>
-                    <strong>NGN {item.price * item.quantity}</strong>
+                    <strong><PriceDisplay price={item.price * item.quantity} /></strong>
                   </span>
                 </li>
               ))}
             </ul>
             <div className="mt-4 font-bold text-lg">
-              Total: &#8358;{formatPrice(totalPrice)}
+              Total: <PriceDisplay price={totalPrice}/>
             </div>
             <div className="mt-6 flex justify-end space-x-4">
               <button
@@ -223,7 +228,7 @@ const Cart = () => {
                 className="bg-blue-800 text-white cursor-pointer px-4 py-2 rounded"
                 onClick={handleCheckout}
               >
-                Proceed to Checkout
+               {"Proceed to Checkout"}
               </button>
             </div>
           </div>

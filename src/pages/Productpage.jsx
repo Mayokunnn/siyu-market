@@ -11,8 +11,12 @@ function Productpage() {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
-  const { addToCart } = useUser();
+  const { addToCart, updateCartQuantity, cart} = useUser();
 
+  const getCartQuantity = (id) => {
+    const item = cart.find((product) => product.id === id);
+    return item ? item.quantity : 0;
+  };
 
   const truncateText = (text, limit) => {
     if (text.length > limit) {
@@ -118,8 +122,9 @@ function Productpage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-            {filteredProducts.map((product) => (
-              <div
+            {filteredProducts.map((product) => {
+              const quantity = getCartQuantity(product.id);
+              return (<div
                 key={product.id}
                 className="bg-white p-4 rounded-lg h-full flex flex-col justify-between shadow hover:shadow-lg transition"
               >
@@ -151,23 +156,47 @@ function Productpage() {
                     </span>
                   </div>
                 </div>
-                <button
-                  disabled={product.stock === 0}
-                  onClick={() =>
-                    addToCart({
-                      id: product.id,
-                      name: product.name,
-                      price: product.discounted_price,
-                      image: product.image_url,
-                      quantity: 1,
-                    })
-                  }
-                  className={`w-full mt-4 bg-black text-white py-2 rounded ${+product.stock > 0 ? "hover:bg-gray-500 cursor-pointer " : "cursor-not-allowed"} transition`}
+                {quantity > 0 ? (
+                  <div className="flex items-center justify-between mt-4 bg-gray-200 rounded p-2">
+                    <button
+                      onClick={() => updateCartQuantity(product.id, quantity - 1)}
+                      className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-700"
+                    >
+                      -
+                    </button>
+                    <span className="font-semibold">{quantity}</span>
+                    <button
+                      onClick={() => updateCartQuantity(product.id, quantity + 1)}
+                      className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-700"
+                    >
+                      +
+                    </button>
+                  </div>
+                ) :
+                  +product.stock > 0  ? <button
+                    onClick={() =>
+                      addToCart({
+                        id: product.id,
+                        name: product.name,
+                        price: product.discounted_price,
+                        image: product.image_url,
+                        quantity: 1,
+                      })
+                    }
+                    className={`w-full mt-4 bg-black text-white py-2 capitalize rounded ${
+                      +product.stock > 0 ? "hover:bg-gray-500 cursor-pointer" : "cursor-not-allowed"
+                    } transition`}
+                  >Add to Cart
+                  </button> : <button
+                  disabled={true}
+                  className={`w-full mt-4 bg-black text-white py-2 capitalize rounded ${
+                    +product.stock > 0 ? "hover:bg-gray-500 cursor-pointer" : "cursor-not-allowed"
+                  } transition`}
                 >
-                 {+product.stock > 0 ? "Add to Cart" : "Out of Stock"}
-                </button>
-              </div>
-            ))}
+                   Out of Stock
+                </button>}
+              </div>)
+        })}
           </div>
         </>
       )}

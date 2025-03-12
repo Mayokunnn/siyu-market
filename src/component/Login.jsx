@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/Usercontext';
+import { toast } from 'sonner';
+import Loader from "./Loader"
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -36,6 +38,7 @@ function Login() {
   };
 
   if (user) {
+    toast("You are logged in")
     navigate('/');
     return;
   }
@@ -70,7 +73,7 @@ function Login() {
               disabled={loading}
               className="bg-blue-800 w-full cursor-pointer flex items-center text-white rounded-md justify-center py-3 mb-6"
             >
-              {loading ? 'Logging In...' : 'Login'}
+              {loading ? <Loader/> : 'Login'}
             </button>
             <h5 className="text-center text-sm">
               Don't have an account?{' '}

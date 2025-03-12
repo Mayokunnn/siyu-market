@@ -40,13 +40,16 @@ function Navbar() {
         <h2 className="text-3xl font-semibold">Siyu Market</h2>
       </div>
 
-      <div
-        className="custom:hidden cursor-pointer z-50"
-        onClick={() => setMenuOpen(!menuOpen)}
-      >
-        <div className="w-6 h-1 bg-black mb-1"></div>
-        <div className="w-6 h-1 bg-black mb-1"></div>
-        <div className="w-6 h-1 bg-black"></div>
+      <div className='flex gap-5 items-center '>
+        <img className='hidden md:block cursor-pointer hover:scale-110' onClick={() => navigate('/cart')} src={CartIcon}/>
+        <div
+          className="custom:hidden cursor-pointer z-50"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          <div className="w-6 h-1 bg-black mb-1"></div>
+          <div className="w-6 h-1 bg-black mb-1"></div>
+          <div className="w-6 h-1 bg-black"></div>
+        </div>
       </div>
 
       
