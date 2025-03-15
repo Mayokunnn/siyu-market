@@ -84,7 +84,7 @@ const Cart = () => {
       }));
 
       const response = await fetch(
-        `${apiUrl}/add`,
+        `${apiUrl}/cart/add`,
         {
           method: "POST",
           headers: {
@@ -106,7 +106,6 @@ const Cart = () => {
       navigate("/checkout");
       sessionStorage.setItem("fromCart", "true");
     } catch (error) {
-      console.log(error)
       navigate("/login");
       toast.error("Failed to checkout");
     }
