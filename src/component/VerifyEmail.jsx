@@ -8,6 +8,7 @@ function VerifyEmail() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleChange = (setter) => (event) => {
     setter(event.target.value);
@@ -17,7 +18,7 @@ function VerifyEmail() {
     event.preventDefault();
   
     try {
-      const response = await fetch('https://siyumarket-backend.vercel.app/users/auth/resend-otp', {
+      const response = await fetch(`${apiUrl}/users/auth/resend-otp`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -46,7 +47,7 @@ function VerifyEmail() {
     setError(null);
 
     try {
-      const response = await fetch('https://siyumarket-backend.vercel.app/users/auth/verify-email', {
+      const response = await fetch(`${apiUrl}/users/auth/verify-email`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

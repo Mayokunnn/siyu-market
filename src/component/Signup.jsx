@@ -12,6 +12,7 @@ function SignUp() {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const { user } = useUser();
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const navigate = useNavigate();
 
@@ -56,7 +57,7 @@ function SignUp() {
     }
 
     try {
-      const response = await fetch('https://siyumarket-backend.vercel.app/users/auth/register', {
+      const response = await fetch(`${apiUrl}/users/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

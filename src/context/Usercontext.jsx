@@ -7,11 +7,12 @@ export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [cart, setCart] = useState([]);
   const [orderHistory, setOrderHistory] = useState([]);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const login = async ({ email, password }, navigate) => {
     try {
       const response = await fetch(
-        "https://siyumarket-backend.vercel.app/users/auth/login",
+       `${apiUrl}/users/auth/login`,
         {
           method: "POST",
           headers: {

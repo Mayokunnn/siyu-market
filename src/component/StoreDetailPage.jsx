@@ -10,6 +10,7 @@ function StoreDetailPage() {
   const [storeProducts, setStoreProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const { addToCart } = useUser();
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   
   const truncateText = (text, limit) => {
@@ -24,7 +25,7 @@ function StoreDetailPage() {
     const fetchStoreDetails = async () => {
       try {
         
-        const response = await fetch(`https://siyumarket-backend.vercel.app/store/${id}`);
+        const response = await fetch(`${apiUrl}/store/${id}`);
         if (response.ok) {
           const data = await response.json();
           setStoreDetails(data.data);
@@ -45,7 +46,7 @@ function StoreDetailPage() {
 
     const fetchStoreProducts = async (storeName) => {
       try {
-        const response = await fetch(`https://siyumarket-backend.vercel.app/product/all?store=${storeName}`);
+        const response = await fetch(`${apiUrl}/product/all?store=${storeName}`);
         if (response.ok) {
           const data = await response.json();
           setStoreProducts(data.data || []);

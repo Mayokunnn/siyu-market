@@ -8,11 +8,12 @@ const Store = () => {
   const [vendors, setVendors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const fetchStores = async () => {
       try {
-        const response = await fetch('https://siyumarket-backend.vercel.app/store/all');
+        const response = await fetch(`${apiUrl}/store/all`);
         if (!response.ok) {
           throw new Error('Failed to fetch stores');
         }
@@ -35,7 +36,7 @@ const Store = () => {
       ) : error ? (
         <Spinner />
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-8 px-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-8 px-4 mb-6">
           {vendors.map((vendor, index) => (
             <motion.div
               key={vendor.id || index}

@@ -7,6 +7,7 @@ function VerifyEmail() {
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const navigate = useNavigate();
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleChange = (setter) => (event) => {
     setter(event.target.value);
@@ -19,7 +20,7 @@ function VerifyEmail() {
     setSuccessMessage(null);
 
     try {
-      const response = await fetch('https://siyumarket-backend.vercel.app/users/auth/reset-password', {
+      const response = await fetch(`${apiUrl}/users/auth/reset-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

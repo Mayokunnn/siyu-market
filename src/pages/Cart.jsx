@@ -7,12 +7,11 @@ import del from "../assets/icon-delete.svg";
 import back from "../assets/icon-back.svg";
 import PriceDisplay from "../component/PriceDisplay";
 import { toast } from "sonner";
-import Loader from "../component/Loader";
 
 const Cart = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const apiUrl = import.meta.env.VITE_API_URL;
   const { cart, setCart, removeFromCart, user, logout } = useUser();
-  const [isLoading, setIsLoading] = useState(false);
   const [quantities, setQuantities] = useState(() => {
     return cart.reduce((acc, item) => {
       acc[item.id] = item.quantity || 1;
@@ -85,7 +84,7 @@ const Cart = () => {
       }));
 
       const response = await fetch(
-        "https://siyumarket-backend.vercel.app/cart/add",
+        `${apiUrl}/add`,
         {
           method: "POST",
           headers: {
@@ -97,26 +96,21 @@ const Cart = () => {
       );
       if (!response.ok) {
         const errorData = await response.json();
-        
+
         console.error("Error response from server:", errorData);
         throw new Error(errorData.code || "Failed to checkout.");
       }
 
-
       const data = await response.json();
       localStorage.setItem("cart", JSON.stringify(data));
-      navigate("/checkout")
+      navigate("/checkout");
       sessionStorage.setItem("fromCart", "true");
-      
     } catch (error) {
-      if(error.message == "token_not_valid"){
-        logout()
-        navigate("/login")
-      } else {
-        toast.error("Failed to checkout");
-      }
+      navigate("/login");
+      toast.error("Failed to checkout");
     }
   };
+
 
   return (
     <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -129,46 +123,80 @@ const Cart = () => {
         <div className="bg-white rounded p-4">
           {cart.length > 0 ? (
             <div>
-              <div className="overflow-x-auto">
+              <div className="w-full overflow-x-auto">
                 <table className="w-full border-collapse text-left text-sm md:text-base">
                   <thead>
-                    <tr className="w-full">
-                      <th className="py-2 border-b">Product</th>
-                      <th className="py-2 border-b">Price</th>
-                      <th className="py-2 border-b">Quantity</th>
-                      <th className="py-2 border-b">Subtotal</th>
-                      <th className="py-2 border-b">Actions</th>
+                    <tr className="w-full bg-gray-50">
+                      <th className="py-3 px-4 border-b font-medium">
+                        Product
+                      </th>
+                      <th className="py-3 px-4 border-b font-medium">Price</th>
+                      <th className="py-3 px-4 border-b font-medium">
+                        Quantity
+                      </th>
+                      <th className="py-3 px-4 border-b font-medium">
+                        Subtotal
+                      </th>
+                      <th className="py-3 px-4 border-b font-medium">
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {cart.map((item) => (
-                      <tr key={item.id} className="align-top">
-                        <td className="py-3 flex items-center gap-3 w-full">
+                      <tr
+                        key={item.id}
+                        className="align-center border-b hover:bg-gray-50 transition-colors"
+                      >
+                        <td className="py-4 px-4 w-48  flex items-center gap-3">
                           <img
                             src={item.image || ""}
                             alt={item.name}
                             className="w-12 h-12 md:w-16 md:h-16 object-contain"
                           />
-                          <span className="text-sm md:text-base">{item.name}</span>
+                          <span className="text-sm md:text-base">
+                            {item.name}
+                          </span>
                         </td>
-                        <td className="py-3"><PriceDisplay price={item.price} /> </td>
-                        <td className="py-3">
+                        <td className="py-4 px-4 ">
+                          <PriceDisplay price={item.price} />
+                        </td>
+                        <td className="py-4 px-4 ">
                           <div className="flex items-center justify-between bg-gray-100 p-2 w-20 md:w-24 rounded-lg text-sm">
-                            <button onClick={() => handleDecrease(item.id)}>
-                              <img src={minus} alt="Decrease" />
+                            <button
+                              onClick={() => handleDecrease(item.id)}
+                              className="p-1 hover:bg-gray-200 cursor-pointer rounded"
+                            >
+                              <img
+                                src={minus}
+                                alt="Decrease"
+                                className="w-4 h-2"
+                              />
                             </button>
                             <span>{quantities[item.id]}</span>
-                            <button onClick={() => handleIncrease(item.id)}>
-                              <img src={add} alt="Increase" />
+                            <button
+                              onClick={() => handleIncrease(item.id)}
+                              className="p-1 hover:bg-gray-200 cursor-pointer rounded"
+                            >
+                              <img
+                                src={add}
+                                alt="Increase"
+                                className="w-4 h-4"
+                              />
                             </button>
                           </div>
                         </td>
-                        <td className="py-3">
-                          <PriceDisplay price={item.price * (quantities[item.id] || 1)} />
+                        <td className="py-4 px-4 border-b">
+                          <PriceDisplay
+                            price={item.price * (quantities[item.id] || 1)}
+                          />
                         </td>
-                        <td className="py-3">
-                          <button onClick={() => handleRemove(item.id)}>
-                            <img src={del} alt="Delete" />
+                        <td className="py-4 px-4 border-b">
+                          <button
+                            onClick={() => handleRemove(item.id)}
+                            className="p-1 hover:bg-gray-200 rounded"
+                          >
+                            <img src={del} alt="Delete" className="w-5 h-5" />
                           </button>
                         </td>
                       </tr>
@@ -214,13 +242,15 @@ const Cart = () => {
                     {item.name} <strong>(x{item.quantity})</strong>
                   </span>
                   <span>
-                    <strong><PriceDisplay price={item.price * item.quantity} /></strong>
+                    <strong>
+                      <PriceDisplay price={item.price * item.quantity} />
+                    </strong>
                   </span>
                 </li>
               ))}
             </ul>
             <div className="mt-4 font-bold text-lg">
-              Total: <PriceDisplay price={totalPrice}/>
+              Total: <PriceDisplay price={totalPrice} />
             </div>
             <div className="mt-6 flex justify-end space-x-4">
               <button
@@ -233,7 +263,7 @@ const Cart = () => {
                 className="bg-blue-800 text-white cursor-pointer px-4 py-2 rounded"
                 onClick={handleCheckout}
               >
-               {"Proceed to Checkout"}
+                {"Proceed to Checkout"}
               </button>
             </div>
           </div>
