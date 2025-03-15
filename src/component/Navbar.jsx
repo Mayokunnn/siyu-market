@@ -42,7 +42,7 @@ function Navbar() {
       </div>
 
       <div className='flex gap-5 items-center'>
-      <span className="relative cursor-pointer" onClick={() => navigate("/cart")}>
+      <span className="lg:block hidden relative cursor-pointer" onClick={() => navigate("/cart")}>
         <img className="hidden md:block hover:scale-110 transition-transform duration-200" src={CartIcon} alt="Cart" />
         { cart.length > 0 && (
           <span className="absolute -top-1 -right-1 bg-orange-500 text-white rounded-full h-4 w-4 flex items-center justify-center text-xs font-bold">
