@@ -11,6 +11,7 @@ const Checkout = () => {
   const [loading, setLoading] = useState(false);
   const [cartDetails, setCartDetails] = useState(null);
   const [formData, setFormData] = useState({ hall: "", room_number: "", name: "", email: "" });
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const fetchCartDetails = async () => {
