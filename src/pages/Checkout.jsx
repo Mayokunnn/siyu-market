@@ -88,6 +88,7 @@ const Checkout = () => {
         throw new Error("Payment authorization failed. Please try again.");
       }
       localStorage.setItem("cart", "[]");
+      sessionStorage.setItem("fromCart", "false");
     } catch (error) {
       console.error("Checkout error:", error);
       toast.error(error.message || "Something went wrong during checkout.");

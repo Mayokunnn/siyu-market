@@ -30,8 +30,9 @@ function Navbar() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+
   return (
-    <div className="w-full flex items-center justify-between mt-8 px-6 relative z-10 ">
+    <div className="w-full flex items-center justify-between mt-8 px-6 py-4 sticky top-0 bg-white z-10 ">
       <div
         className="flex items-end justify-center cursor-pointer"
         onClick={() => navigate('/')}
@@ -40,8 +41,14 @@ function Navbar() {
         <h2 className="text-3xl font-semibold">Siyu Market</h2>
       </div>
 
-      <div className='flex gap-5 items-center '>
-        <img className='hidden md:block cursor-pointer hover:scale-110' onClick={() => navigate('/cart')} src={CartIcon}/>
+      <div className='flex gap-5 items-center'>
+      <span className="relative cursor-pointer" onClick={() => navigate("/cart")}>
+        <img className="hidden md:block hover:scale-110 transition-transform duration-200" src={CartIcon} alt="Cart" />
+        { cart.length > 0 && (
+          <span className="absolute -top-1 -right-1 bg-orange-500 text-white rounded-full h-4 w-4 flex items-center justify-center text-xs font-bold">
+          {cart.length}
+        </span>
+       )}</span>
         <div
           className="custom:hidden cursor-pointer z-50"
           onClick={() => setMenuOpen(!menuOpen)}

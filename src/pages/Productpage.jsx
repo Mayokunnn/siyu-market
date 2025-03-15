@@ -14,7 +14,7 @@ function Productpage() {
   const { addToCart, updateCartQuantity, cart} = useUser();
 
   const getCartQuantity = (id) => {
-    const item = cartArray.find((product) => product.id === id);
+    const item = cart.find((product) => product.id === id);
     return item ? item.quantity : 0;
   };
 

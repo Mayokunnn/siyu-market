@@ -101,7 +101,7 @@ function SignUp() {
             {error && <p className="text-red-600 mb-4">{error}</p>}
             {success && <p className="text-green-600 mb-4">{success}</p>}
             <form onSubmit={handleSubmit}>
-              <div className="flex flex-wrap justify-between items-center">
+              <div className="flex flex-wrap justify-between items-center mb-4">
                 <div className="w-full sm:w-[48%] mb-4 sm:mb-0">
                   <h6 className="mb-[6px] text-[14px] font-medium">First Name</h6>
                   <input
