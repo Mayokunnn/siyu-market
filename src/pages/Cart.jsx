@@ -106,6 +106,7 @@ const Cart = () => {
       navigate("/checkout");
       sessionStorage.setItem("fromCart", "true");
     } catch (error) {
+      console.log(error)
       navigate("/login");
       toast.error("Failed to checkout");
     }
