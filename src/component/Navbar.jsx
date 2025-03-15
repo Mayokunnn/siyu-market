@@ -32,7 +32,7 @@ function Navbar() {
 
 
   return (
-    <div className="w-full flex items-center justify-between mt-8 px-6 py-4 sticky top-0 bg-white z-10 ">
+    <div className="w-full flex items-center justify-between px-6 py-6 sticky top-0 bg-white z-10 ">
       <div
         className="flex items-end justify-center cursor-pointer"
         onClick={() => navigate('/')}
