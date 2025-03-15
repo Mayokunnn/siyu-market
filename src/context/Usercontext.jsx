@@ -40,7 +40,6 @@ export const UserProvider = ({ children }) => {
 
   const logout = () => {
     setUser(null);
-    setCart([]);
     setOrderHistory([]);
     localStorage.removeItem("user");
     toast("You are logged out", {
