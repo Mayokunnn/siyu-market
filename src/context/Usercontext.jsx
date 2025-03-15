@@ -29,7 +29,9 @@ export const UserProvider = ({ children }) => {
       const data = await response.json();
       setUser(data);
       localStorage.setItem("user", JSON.stringify(data));
-
+      toast.success("You are logged in", {
+        id: 2
+      })
       navigate("/");
     } catch (err) {
       throw err;
@@ -41,7 +43,9 @@ export const UserProvider = ({ children }) => {
     setCart([]);
     setOrderHistory([]);
     localStorage.removeItem("user");
-    toast("You are logged out")
+    toast("You are logged out", {
+      id: 1
+    })
   };
 
   const placeOrder = () => {
@@ -66,30 +70,30 @@ export const UserProvider = ({ children }) => {
   
   const addToCart = (product) => {
     setCart((prev) => {
-      const existingProduct = prev.find((item) => item.id === product.id);
+      // Ensure prev is always an array
+      const currentCart = Array.isArray(prev) ? prev : [];
+      
+      const existingProduct = currentCart.find((item) => item.id === product.id);
       if (existingProduct) {
-
-        return prev.map((item) =>
+        return currentCart.map((item) =>
           item.id === product.id
-            ? { ...item, quantity: item.quantity + product.quantity } 
+            ? { ...item, quantity: item.quantity + product.quantity }
             : item
         );
       } else {
+        toast.success("Added to cart", { id: product.id });
         return [
-          ...prev,
+          ...currentCart,
           {
             ...product,
             quantity: product.quantity,
-            price: product.price, 
+            price: product.price,
             image: product.image,
           },
         ];
       }
     });
   };
-  
-  
-  
 
   const removeFromCart = (itemId) => {
     setCart((prev) => prev.filter((item) => item.id !== itemId));
@@ -100,10 +104,20 @@ export const UserProvider = ({ children }) => {
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
-
+  
     const storedCart = localStorage.getItem("cart");
     if (storedCart) {
-      setCart(JSON.parse(storedCart));
+      try {
+        const parsedCart = JSON.parse(storedCart);
+        if (Array.isArray(parsedCart)) {
+          setCart(parsedCart);
+        } else {
+          setCart([]); // Reset to empty array if parsedCart is not an array
+        }
+      } catch (error) {
+        console.error("Failed to parse cart from localStorage:", error);
+        setCart([]); // Reset to empty array if parsing fails
+      }
     }
   }, []);
 

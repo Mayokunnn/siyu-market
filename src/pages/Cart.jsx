@@ -11,7 +11,7 @@ import Loader from "../component/Loader";
 
 const Cart = () => {
   const navigate = useNavigate()
-  const { cart, setCart, removeFromCart, user } = useUser();
+  const { cart, setCart, removeFromCart, user, logout } = useUser();
   const [isLoading, setIsLoading] = useState(false);
   const [quantities, setQuantities] = useState(() => {
     return cart.reduce((acc, item) => {
@@ -97,8 +97,9 @@ const Cart = () => {
       );
       if (!response.ok) {
         const errorData = await response.json();
+        
         console.error("Error response from server:", errorData);
-        throw new Error(errorData.message || "Failed to checkout.");
+        throw new Error(errorData.code || "Failed to checkout.");
       }
 
 
@@ -108,8 +109,12 @@ const Cart = () => {
       sessionStorage.setItem("fromCart", "true");
       
     } catch (error) {
-      toast.error("Failed to checkout");
-      console.log(error)
+      if(error.message == "token_not_valid"){
+        logout()
+        navigate("/login")
+      } else {
+        toast.error("Failed to checkout");
+      }
     }
   };
 

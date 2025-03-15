@@ -15,6 +15,7 @@ import PasswordChange from './component/PasswordChange';
 import Footer from './component/Footer';
 import StoreDetailPage from './component/StoreDetailPage';
 import Checkout from './pages/Checkout';
+import PaymentSuccess from './pages/PaymentSuccess';
 
 function ProtectedCheckout() {
   const location = useLocation();
@@ -45,6 +46,7 @@ function App() {
             <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<ProtectedCheckout />} />
+            <Route path="/success" element={<PaymentSuccess />} />
             <Route path="/verify-email" element={<VerifyEmail />} />
           </Routes>
         </main>

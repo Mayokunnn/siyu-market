@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/Usercontext';
 import { toast } from 'sonner';
-import Loader from "./Loader"
+import Loader from "./Loader";
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -11,6 +11,13 @@ function Login() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const { user, login } = useUser();
+
+  useEffect(() => {
+    if (user) {
+      toast("You are logged in");
+      navigate('/'); // Navigate after the component has rendered
+    }
+  }, [user, navigate]);
 
   const handleChange = (setter) => (event) => {
     setter(event.target.value);
@@ -26,8 +33,7 @@ function Login() {
     } catch (err) {
       if (err.message === "Email is unverified. please verify email.") {
         setTimeout(() => navigate('/verify-email'), 1500);
-      }
-      if (err.message === "Failed to fetch") {
+      } else if (err.message === "Failed to fetch") {
         setError('Check your Internet Connection');
       } else {
         setError(err.message);
@@ -36,12 +42,6 @@ function Login() {
       setLoading(false);
     }
   };
-
-  if (user) {
-    toast("You are logged in")
-    navigate('/');
-    return;
-  }
 
   return (
     <div className="max-w-screen-xl mx-auto px-4">

@@ -14,7 +14,7 @@ function Productpage() {
   const { addToCart, updateCartQuantity, cart} = useUser();
 
   const getCartQuantity = (id) => {
-    const item = cart.find((product) => product.id === id);
+    const item = cartArray.find((product) => product.id === id);
     return item ? item.quantity : 0;
   };
 
@@ -189,9 +189,7 @@ function Productpage() {
                   >Add to Cart
                   </button> : <button
                   disabled={true}
-                  className={`w-full mt-4 bg-black text-white py-2 capitalize rounded ${
-                    +product.stock > 0 ? "hover:bg-gray-500 cursor-pointer" : "cursor-not-allowed"
-                  } transition`}
+                  className={`w-full mt-4 bg-black text-white py-2 capitalize rounded opacity-70 cursor-not-allowed transition`}
                 >
                    Out of Stock
                 </button>}
