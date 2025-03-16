@@ -127,7 +127,7 @@ const ProductDetail = () => {
           </button>
         </div>
 
-        <div className="mb-4 flex space-x-4">
+        <div className="mb-4">
           <button
             onClick={handleAddToCart}
             className={`px-6 py-2 ${
@@ -138,16 +138,6 @@ const ProductDetail = () => {
             disabled={product.stock === 0}
           >
             Add to Cart
-          </button>
-          <button
-            className={`px-6 py-2 ${
-              product.stock === 0
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-red-600 hover:bg-red-700"
-            } text-white rounded`}
-            disabled={product.stock === 0}
-          >
-            Buy Now
           </button>
         </div>
 
