@@ -106,8 +106,8 @@ const Cart = () => {
       navigate("/checkout");
       sessionStorage.setItem("fromCart", "true");
     } catch (error) {
-      navigate("/login");
-      toast.error("Failed to checkout");
+      navigate("/login?next=cart");
+      toast.error("You are not logged in");
     }
   };
 

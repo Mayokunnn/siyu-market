@@ -9,35 +9,36 @@ export const UserProvider = ({ children }) => {
   const [orderHistory, setOrderHistory] = useState([]);
   const apiUrl = import.meta.env.VITE_API_URL;
 
-  const login = async ({ email, password }, navigate) => {
-    try {
-      const response = await fetch(
-       `${apiUrl}/users/auth/login`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, password }),
-        }
-      );
+ const login = async ({ email, password }, navigate) => {
+   try {
+     const response = await fetch(`${apiUrl}/users/auth/login`, {
+       method: "POST",
+       headers: {
+         "Content-Type": "application/json",
+       },
+       body: JSON.stringify({ email, password }),
+     });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Something went wrong");
-      }
+     if (!response.ok) {
+       const errorData = await response.json();
+       throw new Error(errorData.message || "Something went wrong");
+     }
 
-      const data = await response.json();
-      setUser(data);
-      localStorage.setItem("user", JSON.stringify(data));
-      toast.success("You are logged in", {
-        id: 2
-      })
-      navigate("/");
-    } catch (err) {
-      throw err;
-    }
-  };
+     const data = await response.json();
+     setUser(data);
+     localStorage.setItem("user", JSON.stringify(data));
+     toast.success("You are logged in", {
+       id: 2,
+     });
+
+     const searchParams = new URLSearchParams(window.location.search);
+     const nextPath = searchParams.get("next");
+
+     navigate("/" + nextPath || "/");
+   } catch (err) {
+     throw err;
+   }
+ };
 
   const logout = () => {
     setUser(null);

@@ -12,6 +12,7 @@ const Checkout = () => {
   const [cartDetails, setCartDetails] = useState(null);
   const [formData, setFormData] = useState({ hall: "", room_number: "", name: "", email: "" });
   const apiUrl = import.meta.env.VITE_API_URL;
+  sessionStorage.setItem("fromCart", "false");
 
   useEffect(() => {
     const fetchCartDetails = async () => {
@@ -46,7 +47,6 @@ const Checkout = () => {
         setCartDetails(normalizedCart);
       } catch (error) {
         console.error("Error fetching cart details:", error);
-        toast.error(error.message + "2" || "Failed to load cart details.");
       }
     };
 
@@ -91,7 +91,7 @@ const Checkout = () => {
       sessionStorage.setItem("fromCart", "false");
     } catch (error) {
       console.error("Checkout error:", error);
-      toast.error(error.message  + "2" || "Something went wrong during checkout.");
+      toast.error(error.message || "Something went wrong during checkout.");
     } finally {
       setLoading(false);
     }
@@ -102,7 +102,7 @@ const Checkout = () => {
   }
 
   return (
-    <div className="m-4 p-4">
+    <div className="m-4 p-4 space-y-4">
       <div className="py-5 bg-blue-800 text-center">
         <h1 className="text-3xl sm:text-4xl font-bold text-white">
           Checkout
