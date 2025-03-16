@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 
 function VerifyEmail() {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(localStorage.getItem("email"));
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -32,7 +33,7 @@ function VerifyEmail() {
       }
   
       const data = await response.json();
-      console.log('OTP resent successfully:', data);
+      toast.success("OTP resent to your mail")
       setError('A new OTP has been sent to your email.');
     } catch (err) {
       console.error('Error resending OTP:', err.message);
@@ -61,8 +62,7 @@ function VerifyEmail() {
       }
 
       const data = await response.json();
-      console.log('Email verified successfully:', data);
-
+      toast.success("Email verified");
       
       navigate('/login');
     } catch (err) {
@@ -78,18 +78,9 @@ function VerifyEmail() {
         <div className="h-[90vh] flex items-center justify-center">
           <div className="w-[400px]">
             <h2 className="mb-[12px] text-[36px] font-semibold">Email Verification</h2>
-            <p className="mb-[20px] text-[16px] font-normal">Please verify your email</p>
+            <p className="mb-[20px] text-[16px] font-normal">Please verify your email (Check spam if not in primary)</p>
             {error && <p className="text-red-600 mb-4">{error}</p>}
             <form onSubmit={handleSubmit}>
-              <h6 className="mb-[6px] text-[14px] font-medium">Email</h6>
-              <input
-                type="email"
-                placeholder="Enter your Email"
-                className="loginInput w-full mb-[20px] border rounded-[8px] px-[14px] py-[10px]"
-                value={email}
-                onChange={handleChange(setEmail)}
-                required
-              />
               <h6 className="mb-[6px] text-[14px] font-medium">OTP</h6>
               <input
                 type="text"
