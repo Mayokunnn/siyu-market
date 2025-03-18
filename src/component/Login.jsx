@@ -14,8 +14,7 @@ function Login() {
 
   useEffect(() => {
     if (user) {
-      toast("You are logged in");
-      navigate('/'); // Navigate after the component has rendered
+      navigate('/');
     }
   }, [user, navigate]);
 

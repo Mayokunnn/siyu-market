@@ -106,11 +106,18 @@ const Cart = () => {
       navigate("/checkout");
       sessionStorage.setItem("fromCart", "true");
     } catch (error) {
-      navigate("/login?next=cart");
-      toast.error("You are not logged in");
+      if (
+        error.message == "bad_authorization_header" ||
+        error.message == "You must be logged in to checkout."
+      ) {
+        toast.error("You are not logged in")
+        navigate("/login?next=cart");
+      } 
+
+      toast.error(error.message)
+
     }
   };
-
 
   return (
     <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">

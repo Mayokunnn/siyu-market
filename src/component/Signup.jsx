@@ -78,7 +78,6 @@ function SignUp() {
 
       localStorage.setItem("email", email)
       const data = await response.json();
-      console.log('data:', data);
       setSuccess('Registration successful! Redirecting to login...');
       setTimeout(() => navigate('/verify-email'), 3000);
     } catch (err) {

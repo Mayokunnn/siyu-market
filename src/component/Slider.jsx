@@ -70,7 +70,6 @@ function Slider() {
           </p>
           <button
             onClick={() => {
-              console.log('Navigating to:', slide.buttonLink);
               navigate("/products");
             }}
             className="rounded-[4px] px-8 py-3 md:px-12 md:py-4 bg-white text-black hover:bg-gray-200 transition duration-300 text-sm md:text-base"

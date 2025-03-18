@@ -27,14 +27,14 @@ export const UserProvider = ({ children }) => {
      const data = await response.json();
      setUser(data);
      localStorage.setItem("user", JSON.stringify(data));
-     toast.success("You are logged in", {
+     toast.success("Login successful", {
        id: 2,
      });
 
      const searchParams = new URLSearchParams(window.location.search);
      const nextPath = searchParams.get("next");
 
-     navigate("/" + nextPath || "/");
+     nextPath ? navigate("/" + nextPath) : navigate("/")
    } catch (err) {
      throw err;
    }

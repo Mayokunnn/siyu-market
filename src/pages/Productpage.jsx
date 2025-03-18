@@ -176,9 +176,14 @@ function Productpage() {
                       <span className="font-semibold">{quantity}</span>
                       <button
                         onClick={() =>
+                          quantity < product.stock &&
                           updateCartQuantity(product.id, quantity + 1)
                         }
-                        className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-700"
+                        className={`bg-gray-500 text-white px-3 py-1 rounded ${
+                          quantity < product.stock
+                            ? "hover:bg-gray-700"
+                            : "cursor-not-allowed opacity-50"
+                        }`}
                       >
                         +
                       </button>

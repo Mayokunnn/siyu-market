@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/Usercontext";
+import { toast } from "sonner";
 
 function PasswordChange() {
   const { user } = useUser();
@@ -17,7 +18,6 @@ function PasswordChange() {
 
   if (!token) {
     navigate("/login");
-    console.log("user: ", user);
   }
 
   const validatePassword = (password) => {
@@ -86,7 +86,7 @@ function PasswordChange() {
       }
 
       const data = await response.json();
-      console.log("Password Changed Successfully:", data);
+      toast.success("Password Changed Successfully");
 
       setSuccessMessage("Your password has been changed successfully.");
       setTimeout(() => navigate("/login"), 3000);
