@@ -114,6 +114,12 @@ const Cart = () => {
         navigate("/login?next=cart");
       } 
 
+      if (
+        error.message == "token_not_valid"
+      ) {
+        toast.error("Your session has expired")
+        navigate("/login?next=cart");
+      }
       toast.error(error.message)
 
     }
